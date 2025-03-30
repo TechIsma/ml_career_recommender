@@ -3,6 +3,11 @@ from enum import Enum
 from typing import List, Dict
 import uuid
 from datetime import datetime
+'''
+ПРОСТАЯ СИСТЕМА ПОДБОРА ПРОФЕССИЙ (УЧЕБНЫЙ ПРОЕКТ)
+
+⚠ Внимание! Это начальная упрощенная версия кода, созданная для обучения.
+'''
 
 # 1. Перечисление профессий (просто варианты)
 class Profession(Enum):
