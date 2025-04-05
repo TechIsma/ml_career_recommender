@@ -8,7 +8,7 @@ import os
 
 app = FastAPI(title="Career AI API")
 
-# Модели данных (заменим dataclasses на Pydantic)
+
 class Profession(str, Enum):
     DEVELOPER = "Программист"
     TEACHER = "Учитель"
@@ -33,7 +33,7 @@ class PredictionResponse(BaseModel):
 # Имитация базы данных
 fake_db = {}
 
-# Ваш существующий код с адаптацией
+
 class CareerAI:
     def __init__(self):
         self.cost = 10.0
@@ -45,7 +45,7 @@ class CareerAI:
 
 career_service = CareerAI()
 
-# Роуты FastAPI
+
 @app.post("/users/", response_model=User)
 async def create_user(name: str):
     user_id = str(uuid.uuid4())
