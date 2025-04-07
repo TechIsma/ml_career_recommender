@@ -1,4 +1,3 @@
-# models.py
 from typing import List
 from dataclasses import dataclass, field
 from enum import Enum
@@ -33,6 +32,9 @@ class Transaction:
     type: str
     description: str
 
+    def summary(self) -> str:
+        return f"{self.timestamp} - {self.type}: {self.amount} ({self.description})"
+
 @dataclass
 class PredictionTask:
     id: str
@@ -41,6 +43,9 @@ class PredictionTask:
     result: List[str]
     status: str
     timestamp: datetime
+
+    def describe(self) -> str:
+        return f"Task {self.id} for user {self.user_id} - status: {self.status}, result: {self.result}"
 
 @dataclass
 class User:
@@ -55,3 +60,13 @@ class User:
 @dataclass
 class SkillSet:
     skills: List[str]
+
+    def __str__(self):
+        return ", ".join(self.skills)
+
+    def add_skill(self, skill: str):
+        self.skills.append(skill)
+
+    def remove_skill(self, skill: str):
+        if skill in self.skills:
+            self.skills.remove(skill)

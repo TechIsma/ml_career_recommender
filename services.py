@@ -1,10 +1,8 @@
-# services.py
 from models import User, PredictionTask
 from typing import Dict
 import uuid
 from llm import get_profession_advice
 from datetime import datetime
-
 
 class BaseService:
     def __init__(self):
