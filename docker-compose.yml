@@ -14,7 +14,7 @@ services:
         condition: service_healthy
       rabbitmq:
         condition: service_healthy
-    restart: unless-stopped
+    restart: always
 
   web-proxy:
     image: nginx:1.25.3-alpine
@@ -58,7 +58,7 @@ services:
       interval: 5s
       timeout: 5s
       retries: 5
-    restart: unless-stopped
+    restart: always
 
 volumes:
   rabbitmq_data:

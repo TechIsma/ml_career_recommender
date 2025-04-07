@@ -1,3 +1,1 @@
-@'
-# Career 
-
+Docker ML Сервис
