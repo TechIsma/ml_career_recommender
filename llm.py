@@ -1,4 +1,3 @@
-# llm.py
 def get_profession_advice(skills: list[str]) -> list[str]:
     if "programming" in skills:
         return ["Программист"]
