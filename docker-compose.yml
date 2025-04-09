@@ -43,7 +43,7 @@ services:
       interval: 30s
       timeout: 10s
       retries: 5
-    restart: always
+    restart: on-failure
 
   database:
     image: postgres:13-alpine
