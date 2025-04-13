@@ -1,5 +1,6 @@
 from pydantic import BaseModel
 from datetime import datetime
+from typing import Any
 
 class UserBase(BaseModel):
     username: str
@@ -29,6 +30,22 @@ class Transaction(TransactionBase):
     user_id: int
     created_at: datetime
     
+class PredictionBase(BaseModel):
+    model_version: str
+    input_data: dict[str, Any]
+    result: dict[str, Any]
+    confidence: float
+    cost: float = 1.0
+
+class PredictionCreate(PredictionBase):
+    user_id: int
+
+class Prediction(PredictionBase):
+    id: int
+    user_id: int
+    created_at: datetime
+
     class Config:
         orm_mode = True
+
 
