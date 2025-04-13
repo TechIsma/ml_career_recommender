@@ -1,97 +1,112 @@
 from .init_db import init_db
-from .database import SessionLocal
-from .crud import create_user, get_user, update_user_balance, create_transaction, get_transactions
-from .models import User 
+from .database import SessionLocal, Base, engine
+from .crud import (
+    create_user,
+    get_user,
+    update_user_balance,
+    create_transaction,
+    get_transactions,
+    create_prediction,
+    get_predictions
+)
+from .models import User, Prediction
+from passlib.context import CryptContext
+import json
+
+# Инициализация для хеширования паролей
+pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
 def test_database_operations():
-    from .database import Base, engine
+    # Полная очистка и инициализация БД
     Base.metadata.drop_all(bind=engine)
-    init_db()  # Эта функция должна создавать демо-пользователей
+    init_db()
+    
     db = SessionLocal()
     try:
-        # 0. Проверка демо-пользователей
-        print("\n0. Проверка демо-пользователей:")
-        
-        # Сначала создаем демо-пользователей, если их нет
+        # 1. Проверка демо-пользователей
+        print("\n1. Проверка демо-пользователей:")
         admin = db.query(User).filter(User.email == "admin@example.com").first()
-        if not admin:
-            admin_data = {
-                "email": "admin@example.com",
-                "username": "admin",
-                "password": "securepassword",
-                "is_admin": True
-            }
-            admin = create_user(db, admin_data)
-            print("Администратор создан")
-        
         demo_user = db.query(User).filter(User.email == "user@example.com").first()
-        if not demo_user:
-            user_data = {
-                "email": "user@example.com",
-                "username": "demo_user",
-                "password": "demopassword",
-                "is_admin": False
-            }
-            demo_user = create_user(db, user_data)
-            print("Демо-пользователь создан")
         
-        print(f"Администратор: {admin.username}, баланс: {admin.balance}, is_admin: {admin.is_admin}")
+        assert admin is not None, "Администратор не создан"
+        assert demo_user is not None, "Демо-пользователь не создан"
+        print(f"Администратор: {admin.username}, баланс: {admin.balance}")
         print(f"Демо-пользователь: {demo_user.username}, баланс: {demo_user.balance}")
 
-        # 1. Тестирование создания нового пользователя
-        print("\n1. Тестирование создания пользователя:")
-        test_user = {
-            "email": "test_user@example.com",
+        # 2. Тестирование пользователей
+        print("\n2. Тестирование работы с пользователями:")
+        test_user_data = {
+            "email": "test@example.com",
             "username": "test_user",
-            "password": "testpass123"
+            "password": pwd_context.hash("testpass123"),
+            "is_admin": False
         }
+        user = create_user(db, test_user_data)
         
-        created_user = create_user(db, test_user)
-        print(f"Создан пользователь: {created_user.username} (ID: {created_user.id})")
+        fetched_user = get_user(db, user.id)
+        assert fetched_user.username == "test_user", "Ошибка получения пользователя"
+        print(f"Пользователь создан: {fetched_user.username} (ID: {fetched_user.id})")
+
+        # 3. Тестирование баланса и транзакций
+        print("\n3. Тестирование операций с балансом:")
+        updated_user = update_user_balance(db, user.id, 200.0)
+        assert updated_user.balance == 200.0, "Ошибка пополнения баланса"
         
-        # 2. Тестирование получения пользователя
-        print("\n2. Тестирование получения пользователя:")
-        fetched_user = get_user(db, created_user.id)
-        print(f"Получен пользователь: {fetched_user.username}, баланс: {fetched_user.balance}")
+        updated_user = update_user_balance(db, user.id, -50.0)
+        assert updated_user.balance == 150.0, "Ошибка списания средств"
+        print(f"Текущий баланс: {updated_user.balance}")
+
+        # 4. Тестирование транзакций
+        print("\n4. Тестирование транзакций:")
+        create_transaction(db, {
+            "user_id": user.id,
+            "amount": 200.0,
+            "transaction_type": "deposit",
+            "description": "Пополнение"
+        })
         
-        # 3. Тестирование пополнения баланса
-        print("\n3. Тестирование пополнения баланса:")
-        updated_user = update_user_balance(db, created_user.id, 150.0)
-        print(f"Баланс после пополнения: {updated_user.balance}")
-        
-        # Создаем транзакцию для пополнения
-        deposit_transaction = {
-            "user_id": created_user.id,
-            "amount": 150.0,
-            "transaction_type": "пополнение",
-            "description": "Тестовое пополнение"
-        }
-        create_transaction(db, deposit_transaction)
-        
-        # 4. Тестирование списания средств
-        print("\n4. Тестирование списания средств:")
-        updated_user = update_user_balance(db, created_user.id, -50.0)
-        print(f"Баланс после списания: {updated_user.balance}")
-        
-        # Создаем транзакцию для списания
-        withdrawal_transaction = {
-            "user_id": created_user.id,
+        create_transaction(db, {
+            "user_id": user.id,
             "amount": 50.0,
-            "transaction_type": "списание",
-            "description": "Тестовое списание"
+            "transaction_type": "withdrawal",
+            "description": "Списание"
+        })
+        
+        transactions = get_transactions(db, user.id)
+        assert len(transactions) == 2, "Не все транзакции созданы"
+        print("Транзакции:")
+        for t in transactions:
+            print(f"- {t.transaction_type}: {t.amount}")
+
+        # 5. Тестирование предсказаний
+        print("\n5. Тестирование предсказаний:")
+        prediction_data = {
+            "user_id": user.id,
+            "input_data": json.dumps({"skills": ["Python"]}),
+            "result": json.dumps({"career": "Data Scientist"}),
+            "confidence": 0.85,
+            "cost": 1.0
         }
-        create_transaction(db, withdrawal_transaction)
+        prediction = create_prediction(db, prediction_data)
         
-        # 5. Тестирование истории транзакций
-        print("\n5. Тестирование истории транзакций:")
-        transactions = get_transactions(db, created_user.id)
-        print(f"Найдено {len(transactions)} транзакций:")
-        for tx in transactions:
-            print(f"- {tx.transaction_type}: {tx.amount} ({tx.description})")
-        
+        predictions = get_predictions(db, user.id)
+        assert len(predictions) > 0, "Предсказания не созданы"
+        print(f"Создано предсказаний: {len(predictions)}")
+        print(f"Пример: {predictions[0].result}")
+
+        # 6. Проверка связей
+        print("\n6. Проверка связей между таблицами:")
+        user_with_predictions = db.query(User).filter(User.id == user.id).first()
+        assert user_with_predictions.predictions, "Связь User-Prediction не работает"
+        print("Связи между таблицами работают корректно")
+
+    except Exception as e:
+        db.rollback()
+        print(f"\nОшибка при тестировании: {e}")
+        raise
     finally:
         db.close()
-        print("\nТестирование завершено")
+        print("\nТестирование завершено. Все проверки пройдены.")
 
 if __name__ == "__main__":
     test_database_operations()

@@ -1,5 +1,7 @@
-from sqlalchemy.orm import Session
 from . import models
+from sqlalchemy.orm import Session
+from .models import User, Transaction, Prediction
+from datetime import datetime
 
 def create_user(db: Session, user_data: dict):
     """Создает пользователя с проверкой уникальности"""
@@ -40,3 +42,25 @@ def create_transaction(db: Session, transaction_data: dict):
 
 def get_transactions(db: Session, user_id: int):
     return db.query(models.Transaction).filter(models.Transaction.user_id == user_id).all()
+
+
+def create_prediction(db: Session, prediction_data: dict):
+    db_prediction = Prediction(**prediction_data)
+    db.add(db_prediction)
+    db.commit()
+    db.refresh(db_prediction)
+    return db_prediction
+
+def get_predictions(db: Session, user_id: int, skip: int = 0, limit: int = 100):
+    return (
+        db.query(Prediction)
+        .filter(Prediction.user_id == user_id)
+        .order_by(Prediction.created_at.desc())
+        .offset(skip)
+        .limit(limit)
+        .all()
+    )
+
+def get_prediction_by_id(db: Session, prediction_id: int):
+    """Получение конкретного предсказания по ID"""
+    return db.query(Prediction).filter(Prediction.id == prediction_id).first()
