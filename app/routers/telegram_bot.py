@@ -4,7 +4,7 @@ import telebot
 from fastapi import APIRouter
 from fastapi.responses import JSONResponse
 
-TOKEN = "your-telegram-bot-token"  # Замените на мой токен
+TOKEN = "your-telegram-bot-token"  # мой токен
 bot = telebot.TeleBot(TOKEN)
 
 router = APIRouter()
