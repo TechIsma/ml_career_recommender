@@ -7,22 +7,22 @@ from passlib.context import CryptContext
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
 def create_user(db: Session, user_data: dict):
-    """Создает пользователя с проверкой уникальности"""
-    # Проверка существования пользователя
+    """Создает пользователя — пароль должен быть уже захеширован"""
     if db.query(models.User).filter(models.User.username == user_data["username"]).first():
         raise ValueError(f"Имя пользователя {user_data['username']} уже занято")
     if db.query(models.User).filter(models.User.email == user_data["email"]).first():
         raise ValueError(f"Email {user_data['email']} уже зарегистрирован")
-    
+
     db_user = models.User(
         email=user_data["email"],
         username=user_data["username"],
-        hashed_password=user_data["password"] + "notreallyhashed"
+        hashed_password=user_data["hashed_password"]  # ← используем готовый хэш
     )
     db.add(db_user)
     db.commit()
     db.refresh(db_user)
     return db_user
+
 
 def get_user(db: Session, user_id: int):
     return db.query(models.User).filter(models.User.id == user_id).first()
@@ -76,6 +76,17 @@ def get_user_by_username(db: Session, username: str):
 
 def authenticate_user(db: Session, username: str, password: str):
     user = get_user_by_username(db, username)
-    if not user or not pwd_context.verify(password, user.hashed_password):
+
+    if not user:
+        print("Пользователь не найден")
         return False
+
+    print("Хеш из БД:", user.hashed_password)
+    print("Введённый пароль:", password)
+
+    if not pwd_context.verify(password, user.hashed_password):
+        print("Неверный пароль")
+        return False
+
+    print("Успешная авторизация")
     return user

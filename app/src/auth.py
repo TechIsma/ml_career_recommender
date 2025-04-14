@@ -3,9 +3,9 @@ from fastapi.security import OAuth2PasswordBearer
 from jose import JWTError, jwt
 from sqlalchemy.orm import Session
 from datetime import datetime, timedelta
-from passlib.context import CryptContext  # Добавлен импорт
-from .database import SessionLocal  # Исправлен импорт
-from . import crud  # Исправлен импорт
+from passlib.context import CryptContext 
+from .database import SessionLocal  
+from . import crud  
 from .config import settings
 from . import schemas
 # Конфигурация JWT
@@ -13,7 +13,7 @@ SECRET_KEY = settings.SECRET_KEY
 ALGORITHM = "HS256"
 ACCESS_TOKEN_EXPIRE_MINUTES = 30
 
-oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/api/token")  # Добавлен префикс /api
+oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/api/token")  
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
 
