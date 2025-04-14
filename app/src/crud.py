@@ -2,6 +2,9 @@ from . import models
 from sqlalchemy.orm import Session
 from .models import User, Transaction, Prediction
 from datetime import datetime
+from passlib.context import CryptContext
+
+pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
 def create_user(db: Session, user_data: dict):
     """Создает пользователя с проверкой уникальности"""
@@ -64,3 +67,15 @@ def get_predictions(db: Session, user_id: int, skip: int = 0, limit: int = 100):
 def get_prediction_by_id(db: Session, prediction_id: int):
     """Получение конкретного предсказания по ID"""
     return db.query(Prediction).filter(Prediction.id == prediction_id).first()
+
+def get_user_by_email(db: Session, email: str):
+    return db.query(models.User).filter(models.User.email == email).first()
+
+def get_user_by_username(db: Session, username: str):
+    return db.query(models.User).filter(models.User.username == username).first()
+
+def authenticate_user(db: Session, username: str, password: str):
+    user = get_user_by_username(db, username)
+    if not user or not pwd_context.verify(password, user.hashed_password):
+        return False
+    return user

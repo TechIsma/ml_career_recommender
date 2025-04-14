@@ -11,3 +11,4 @@ uuid==1.30
 uvicorn==0.34.0
 sqlalchemy==2.0.15
 passlib==1.7.4
+python-multipart>=0.0.5

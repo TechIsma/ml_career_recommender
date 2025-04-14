@@ -45,6 +45,15 @@ class Prediction(PredictionBase):
     user_id: int
     created_at: datetime
 
+
+class Token(BaseModel):
+    access_token: str
+    token_type: str
+
+class BalanceResponse(BaseModel):
+    message: str
+    new_balance: float
+
     class Config:
         orm_mode = True
 

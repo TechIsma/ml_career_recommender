@@ -30,7 +30,8 @@ services:
       - ./nginx/certs:/etc/nginx/certs
     depends_on:
       - app
-    restart: always
+      - db
+    restart: unless-stopped
 
   rabbitmq:
     image: rabbitmq:3.12-management-alpine

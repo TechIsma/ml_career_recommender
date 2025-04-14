@@ -12,6 +12,10 @@ class Settings(BaseSettings):
     RABBITMQ_DEFAULT_USER: str = Field(..., env="RABBITMQ_DEFAULT_USER")
     RABBITMQ_DEFAULT_PASS: str = Field(..., env="RABBITMQ_DEFAULT_PASS")
     RABBITMQ_URL: str = Field(..., env="RABBITMQ_URL")
+
+    # JWT
+    SECRET_KEY: str = Field(..., env="SECRET_KEY")
+    ALGORITHM: str = Field(default="HS256", env="ALGORITHM")
     
     model_config = SettingsConfigDict(
         env_file=".env",

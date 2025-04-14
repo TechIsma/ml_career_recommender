@@ -8,3 +8,11 @@ engine = create_engine(settings.DATABASE_URL)
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 
 Base = declarative_base()
+
+def get_db():
+    """Генератор сессий для Dependency Injection"""
+    db = SessionLocal()
+    try:
+        yield db
+    finally:
+        db.close()
