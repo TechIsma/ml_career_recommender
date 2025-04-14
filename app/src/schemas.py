@@ -14,8 +14,6 @@ class User(UserBase):
     balance: float
     is_admin: bool
     
-    class Config:
-        orm_mode = True
 
 class TransactionBase(BaseModel):
     amount: float
