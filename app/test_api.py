@@ -1,48 +1,53 @@
+import random
 import requests
 from pprint import pprint
 
-BASE_URL = "http://127.0.0.1:8000"  # Убрали /api, так как он уже в роутерах
+BASE_URL = "http://127.0.0.1:8000"
 
 def test_api():
-    # 1. Регистрация (теперь путь /api/register)
+    rand_suffix = random.randint(1000, 9999)
+
     print("\n1. Регистрируем пользователя:")
     reg_data = {
-        "email": "test@example.com",
-        "username": "testuser",
+        "email": f"test{rand_suffix}@example.com",
+        "username": f"testuser{rand_suffix}",
         "password": "testpass123"
     }
-    response = requests.post(f"{BASE_URL}/api/register", json=reg_data)
-    
+    response = requests.post(f"{BASE_URL}/auth/register", json=reg_data)
+
     if response.status_code != 200:
         print(f"Ошибка регистрации: {response.status_code}")
-        pprint(response.json())
+        try:
+            pprint(response.json())
+        except:
+            print(response.text)
         return
-    
+
     pprint(response.json())
 
-    # 2. Авторизация
     print("\n2. Получаем токен:")
     auth_data = {
-        "username": "testuser",
-        "password": "testpass123"
+        "username": reg_data["username"],
+        "password": reg_data["password"]
     }
-    response = requests.post(f"{BASE_URL}/api/token", data=auth_data)
-    
+    response = requests.post(f"{BASE_URL}/auth/token", data=auth_data)
+
     if response.status_code != 200:
         print(f"Ошибка авторизации: {response.status_code}")
-        pprint(response.json())
+        try:
+            pprint(response.json())
+        except:
+            print(response.text)
         return
-    
+
     token = response.json().get("access_token")
     print(f"Токен: {token[:15]}...")
 
-    # 3. Получение профиля
     print("\n3. Получаем профиль:")
     headers = {"Authorization": f"Bearer {token}"}
     response = requests.get(f"{BASE_URL}/api/users/me", headers=headers)
     pprint(response.json())
 
-    # 4. Пополнение баланса
     print("\n4. Пополняем баланс на 100:")
     response = requests.post(
         f"{BASE_URL}/api/balance/deposit?amount=100",
