@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CareerGenius - Подбор профессий с помощью AI</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <header>
+        <div class="container">
+            <h1>CareerGenius</h1>
+            <p>Интеллектуальный подбор профессий на основе ваших навыков и интересов</p>
+        </div>
+    </header>
+
+    <main class="container">
+        <section class="intro">
+            <h2>Найдите профессию своей мечты</h2>
+            <p>Ответьте на несколько вопросов, и наша AI-система подберет для вас наиболее подходящие профессии</p>
+        </section>
+
+        <section class="questionnaire">
+            <form id="career-form">
+                <div class="form-group">
+                    <label for="skills">Ваши основные навыки и умения:</label>
+                    <textarea id="skills" placeholder="Например: программирование, анализ данных, работа в команде..."></textarea>
+                </div>
+
+                <div class="form-group">
+                    <label for="interests">Ваши интересы и увлечения:</label>
+                    <textarea id="interests" placeholder="Например: технологии, искусство, спорт..."></textarea>
+                </div>
+
+                <div class="form-group">
+                    <label for="experience">Ваш опыт работы (если есть):</label>
+                    <textarea id="experience" placeholder="Опишите ваш профессиональный опыт"></textarea>
+                </div>
+
+                <div class="form-group">
+                    <label for="education">Ваше образование:</label>
+                    <select id="education">
+                        <option value="">Выберите уровень образования</option>
+                        <option value="school">Среднее образование</option>
+                        <option value="college">Среднее специальное</option>
+                        <option value="bachelor">Бакалавриат</option>
+                        <option value="master">Магистратура</option>
+                        <option value="phd">Аспирантура/PhD</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label>Предпочитаемый тип работы:</label>
+                    <div class="checkbox-group">
+                        <label><input type="checkbox" name="work-type" value="office"> Офисная</label>
+                        <label><input type="checkbox" name="work-type" value="remote"> Удаленная</label>
+                        <label><input type="checkbox" name="work-type" value="hybrid"> Гибридная</label>
+                        <label><input type="checkbox" name="work-type" value="outdoor"> На открытом воздухе</label>
+                    </div>
+                </div>
+
+                <button type="submit" class="btn">Подобрать профессии</button>
+            </form>
+        </section>
+
+        <section class="results hidden" id="results">
+            <h2>Рекомендованные для вас профессии</h2>
+            <div class="profession-cards">
+                <!-- Результаты будут добавлены здесь через JavaScript -->
+            </div>
+        </section>
+
+        <section class="loading hidden" id="loading">
+            <div class="spinner"></div>
+            <p>AI анализирует ваши ответы...</p>
+        </section>
+    </main>
+
+    <footer>
+        <div class="container">
+            <p>© 2023 CareerGenius. Все права защищены.</p>
+            <p>Использует передовые технологии искусственного интеллекта</p>
+        </div>
+    </footer>
+
+    <script>
+        // Здесь будет код для взаимодействия с вашим ядром системы
+        document.getElementById('career-form').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            // Показываем индикатор загрузки
+            document.getElementById('loading').classList.remove('hidden');
+            document.getElementById('results').classList.add('hidden');
+            
+            // Имитация запроса к API (замените на реальный вызов вашего ядра)
+            setTimeout(function() {
+                document.getElementById('loading').classList.add('hidden');
+                
+                // Пример результатов (замените на реальные данные от вашего ядра)
+                const resultsContainer = document.querySelector('.profession-cards');
+                resultsContainer.innerHTML = `
+                    <div class="profession-card">
+                        <h3>Data Scientist</h3>
+                        <p>Специалист по анализу данных и машинному обучению.</p>
+                        <div class="match-score">Совпадение: 92%</div>
+                    </div>
+                    <div class="profession-card">
+                        <h3>Frontend Developer</h3>
+                        <p>Разработчик пользовательских интерфейсов для веб-приложений.</p>
+                        <div class="match-score">Совпадение: 87%</div>
+                    </div>
+                    <div class="profession-card">
+                        <h3>Product Manager</h3>
+                        <p>Управление разработкой и продвижением IT-продуктов.</p>
+                        <div class="match-score">Совпадение: 78%</div>
+                    </div>
+                `;
+                
+                document.getElementById('results').classList.remove('hidden');
+            }, 2000);
+        });
+    </script>
+</body>
+</html>
