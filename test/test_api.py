@@ -1,7 +1,7 @@
 import random
 import requests
 from pprint import pprint
-
+#fast
 BASE_URL = "http://127.0.0.1:8000"
 url = "http://localhost:8000/predict"
 
