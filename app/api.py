@@ -1,6 +1,6 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from .routers import auth, users, predictions, balance
+from .routers import auth, users, predictions, balance, predict
 
 app = FastAPI(
     title="Career Recommendation API",
@@ -23,6 +23,7 @@ app.include_router(auth.router)
 app.include_router(users.router)
 app.include_router(predictions.router)
 app.include_router(balance.router)
+app.include_router(predict.router)
 if __name__ == "__main__":
     import uvicorn
     uvicorn.run("api:app", host="0.0.0.0", port=8000, reload=True)

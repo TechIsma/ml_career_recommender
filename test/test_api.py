@@ -3,6 +3,7 @@ import requests
 from pprint import pprint
 
 BASE_URL = "http://127.0.0.1:8000"
+url = "http://localhost:8000/predict"
 
 def test_api():
     rand_suffix = random.randint(1000, 9999)
@@ -54,6 +55,18 @@ def test_api():
         headers=headers
     )
     pprint(response.json())
+
+data = {
+    "user_id": 123,
+    "input_data": {"feature1": 10, "feature2": 20}
+}
+
+# Отправка POST-запроса
+response = requests.post(url, json=data)
+
+# Печать ответа
+print(response.status_code)
+print(response.json())
 
 if __name__ == "__main__":
     test_api()
