@@ -4,7 +4,7 @@ from app.src import auth
 from app.src import crud
 from app.src.schemas import Transaction
 
-router = APIRouter(prefix="/transactions", tags=["Transactions"])
+router = APIRouter(prefix="/transactions")
 
 @router.get("/history", response_model=list[Transaction])
 def get_transaction_history(

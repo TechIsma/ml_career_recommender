@@ -45,12 +45,12 @@ def test_api():
 
     print("\n3. Получаем профиль:")
     headers = {"Authorization": f"Bearer {token}"}
-    response = requests.get(f"{BASE_URL}/api/users/me", headers=headers)
+    response = requests.get(f"{BASE_URL}/users/me", headers=headers)
     pprint(response.json())
 
     print("\n4. Пополняем баланс на 100:")
     response = requests.post(
-        f"{BASE_URL}/api/balance/deposit?amount=100",
+        f"{BASE_URL}/balance/deposit?amount=100",
         headers=headers
     )
     pprint(response.json())

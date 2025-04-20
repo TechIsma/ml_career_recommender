@@ -5,8 +5,7 @@ from ..src.auth import get_current_user
 from ..src.database import get_db
 
 router = APIRouter(
-    prefix="/api",
-    tags=["Balance"]
+    prefix="/balance"
 )
 
 @router.post("/balance", response_model=schemas.BalanceResponse)

@@ -4,7 +4,7 @@ from ..src import schemas, crud
 from ..src.database import SessionLocal
 from ..src.auth import get_current_user
 
-router = APIRouter(tags=["predictions"])
+router = APIRouter(prefix="predictions")
 
 def get_db():
     db = SessionLocal()

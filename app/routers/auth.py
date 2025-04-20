@@ -10,10 +10,7 @@ from ..src.auth import (
     pwd_context
 )
 
-router = APIRouter(
-    #prefix="/api",
-    tags=["Authentication"]
-)
+router = APIRouter(prefix="/auth", tags=["Authentication"])
 
 def get_db():
     db = SessionLocal()
@@ -50,10 +47,10 @@ def login_for_access_token(
     form_data: OAuth2PasswordRequestForm = Depends(),
     db: Session = Depends(get_db)
 ):
-    print(f"📝 Попытка входа для пользователя: {form_data.username}")
+    print(f"Попытка входа для пользователя: {form_data.username}")
     user = authenticate_user(db, form_data.username, form_data.password)
     if not user:
-        print("❌ Неверный логин или пароль")
+        print("Неверный логин или пароль")
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
             detail="Incorrect username or password",

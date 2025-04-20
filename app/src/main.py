@@ -1,4 +1,4 @@
-from .init_db import init_db
+from src.init_db import init_db
 from .database import SessionLocal, Base, engine
 from .crud import (
     create_user,
